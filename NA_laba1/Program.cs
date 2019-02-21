@@ -375,7 +375,7 @@ namespace NA_laba1
                     Console.Write(A[i, j] + " ");
                 Console.WriteLine();
             }
-            Console.WriteLine("------------------------------------------------------------------");
+            Console.WriteLine("-----------------------------------------------------------------");
         }
         #endregion
     }
