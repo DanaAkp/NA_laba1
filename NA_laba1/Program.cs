@@ -120,6 +120,7 @@ namespace NA_laba1
         #region Гаусс
         static double[,] gauss(double[,] A, int n)
         {
+            determinant = 1;
             for (int i = 0; i < n; i++)
             {
                 double buf = A[i, i];
@@ -348,7 +349,12 @@ namespace NA_laba1
             OutputLU(L, n);
             Console.WriteLine("--------------Матрица U");
             OutputLU(U, n);
-
+            determinant = 1;
+            for(int i = 0; i < n; i++)
+            {
+                determinant *= U[i, i];
+            }
+            Console.WriteLine("determ U = "+ determinant);
             return Desicion(L, U, B, n);
         }
         static double[,] Desicion(double[,] L,double[,] U,double[] B,int n)
