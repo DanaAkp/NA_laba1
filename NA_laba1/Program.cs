@@ -18,7 +18,7 @@ namespace NA_laba1
 
             double[,] A1 = new double[n,n]{ { 2, 1, -1, 1 }, { 0.4, 0.5, 4, -8.5 }, { 0.3, -1, 1, 5.2 }, { 1, 0.2, 2.5, -1} };
             double[] B = new double[n] { 2.7, 21.9, -3.9, 9.9 };
-            double[,] A = Dopilim(A1, B, n);
+            double[,] A = ExtendedMatrix(A1, B, n);
             double b = average(A, n);
 
             for (int i = 0; i < n; i++)
@@ -33,6 +33,7 @@ namespace NA_laba1
                 Console.WriteLine();
             }
             double[,] newA;
+
             //Console.WriteLine("---------------------------------Метод Гаусса:---------------------------------");
             //newA = gauss(A, n);
             //Error(newA, n, b);
@@ -48,13 +49,13 @@ namespace NA_laba1
             //Error(newA, n, b);
             //obrModif2(newA, n);
 
-            Console.WriteLine("------------------------------Модификация метода Гаусса3:------------------------------------");
-            newA = gaussModif3(A, n);
-            Error(newA, n, b);
-            obrModif3(newA, n);
+            //Console.WriteLine("------------------------------Модификация метода Гаусса3:------------------------------------");
+            //newA = gaussModif3(A, n);
+            //Error(newA, n, b);
+            //obrModif3(newA, n);
 
 
-            LU(A,n);
+            Error(LU(A, B, n), n, b);
 
             Console.ReadLine();
         }
@@ -314,7 +315,7 @@ namespace NA_laba1
         #endregion
 
         #region LU-методы
-        static void LU(double[,] A,int n)
+        static double[,] LU(double[,] A,double[] B, int n)
         {
             double[,] L = new double[n, n];
             double[,] U = new double[n, n];
@@ -347,14 +348,18 @@ namespace NA_laba1
             OutputLU(L, n);
             Console.WriteLine("--------------Матрица U");
             OutputLU(U, n);
+            return Desicion(L, U, B, n);
         }
-        static void Desicion(double[,] L,double[,] U,double[] B,int n)
+        static double[,] Desicion(double[,] L,double[,] U,double[] B,int n)
         {
-            double[,] LY = Dopilim(L, B, n);
-            gauss(LY, n);
-            double[,] UX = Dopilim(U, X, n);
+            double[,] LY = ExtendedMatrix(L, B, n);
+            LY = gauss(LY, n);
+            double[,] UX = ExtendedMatrix(U, obr(LY,n), n);
+            UX = gauss(UX, n);
+            obr(UX, n);
+            return UX;
         }
-        static double[,] Dopilim(double[,] A, double[] B,int n)
+        static double[,] ExtendedMatrix(double[,] A, double[] B,int n)
         {
             double[,] newA = new double[n, n + 1];
             for(int i = 0; i < n; i++)
