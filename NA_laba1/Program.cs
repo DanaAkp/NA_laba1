@@ -348,6 +348,7 @@ namespace NA_laba1
             OutputLU(L, n);
             Console.WriteLine("--------------Матрица U");
             OutputLU(U, n);
+
             return Desicion(L, U, B, n);
         }
         static double[,] Desicion(double[,] L,double[,] U,double[] B,int n)
