@@ -6,70 +6,20 @@ using System.Threading.Tasks;
 
 namespace NA_laba1
 {
-    class Program
+    class Matrix
     {
+        int n;
+        double[,] A;
+        double[] B;
+        double[] X;
+        static int[] countX;
         static double determinant = 1;
-        static int[] countX = new int[4];
-        static double[] X = new double[4];
-        static void Main(string[] args)
+        public Matrix(double[,] A,double[] B,int n)
         {
-            Random rand = new Random();
-            const int n = 4;
-
-            double[,] A1 = new double[n,n]{ { 2, 1, -1, 1 }, { 0.4, 0.5, 4, -8.5 }, { 0.3, -1, 1, 5.2 }, { 1, 0.2, 2.5, -1} };
-            double[] B = new double[n] { 2.7, 21.9, -3.9, 9.9 };
-            double[,] A = ExtendedMatrix(A1, B, n);
-            double b = average(A, n);
-
-            for (int i = 0; i < n; i++)
-                countX[i] = i;
-            for (int i = 0; i < n; i++)
-            {
-                for (int j = 0; j < n + 1; j++)
-                {
-                   // A[i, j] = rand.Next(10);
-                    Console.Write(A[i, j] + " ");
-                }
-                Console.WriteLine();
-            }
-            double[,] newA;
-
-            //Console.WriteLine("---------------------------------Метод Гаусса:---------------------------------");
-            //newA = gauss(A, n);
-            //Error(newA, n, b);
-            //  obr(newA, n);
-
-            //Console.WriteLine("---------------------------------Модификация метода Гаусса1---------------------------------");
-            //  gaussModif1(A, n);
-            //Error(newA, n, b);
-            //obrModif1(newA, n);
-
-            //Console.WriteLine("---------------------------------Модификация метода Гаусса2:---------------------------------");
-            //newA = gaussModif2(A, n);
-            //Error(newA, n, b);
-            //obrModif2(newA, n);
-
-            Console.WriteLine("------------------------------Модификация метода Гаусса3:------------------------------------");
-            newA = gaussModif3(A, n);
-            Error(newA, n, b);
-            obrModif3(newA, n);
-
-
-            //Error(LU(A, B, n), n, b);
-
-            Console.ReadLine();
+            this.A = A;
+            this.B = B;
+            this.n = n;
         }
-        
-        //A(n*m) * B(m*k)
-        static void MulMatrix(double[,] A, double[,] B, int n, int m, int k)
-        {
-
-            for(int i = 0; i < n; i++)
-            {
-
-            }
-        }
-
         #region Методы
         static void Output(double[,] A, int n)
         {
@@ -81,7 +31,7 @@ namespace NA_laba1
             }
             Console.WriteLine("------------------------------------------------------------------");
         }
-        static void Error(double[,] A,int n, double b)
+        static void Error(double[,] A, int n, double b)
         {
             double myB = average(A, n);
             Console.WriteLine(" B = " + b);
@@ -103,7 +53,7 @@ namespace NA_laba1
         }
         static double[,] Colum(double[,] A, int n, int a, int k) //а и к - индексы элементов,которые меняем м\у собой
         {
-            for (int i = 0; i < n+1; i++)
+            for (int i = 0; i < n + 1; i++)
             {
                 double buf = A[a, i];
                 A[a, i] = A[k, i];
@@ -160,7 +110,7 @@ namespace NA_laba1
                     buf += A[i, k] * x[k];
                 }
                 x[i] = A[i, n] - buf;
-                Console.Write("X"+i+" = "+x[i] + "\n");
+                Console.Write("X" + i + " = " + x[i] + "\n");
                 //c--;
             }
             return x;
@@ -177,7 +127,7 @@ namespace NA_laba1
                 for (int c = i; c < n; c++)
                     if (Math.Abs(max) < Math.Abs(A[i, c]))
                     { max = A[i, c]; index = c; }
-                if(i!=index)
+                if (i != index)
                     A = Row(A, n, i, index);
                 double buf = A[i, i];
                 for (int j = i; j < n + 1; j++) A[i, j] /= buf;
@@ -325,7 +275,7 @@ namespace NA_laba1
         #endregion
 
         #region LU-методы
-        static double[,] LU(double[,] A,double[] B, int n)
+        static double[,] LU(double[,] A, double[] B, int n)
         {
             double[,] L = new double[n, n];
             double[,] U = new double[n, n];
@@ -359,28 +309,28 @@ namespace NA_laba1
             Console.WriteLine("--------------Матрица U");
             OutputLU(U, n);
             determinant = 1;
-            for(int i = 0; i < n; i++)
+            for (int i = 0; i < n; i++)
             {
                 determinant *= U[i, i];
             }
-            Console.WriteLine("determ U = "+ determinant);
+            Console.WriteLine("determ U = " + determinant);
             return Desicion(L, U, B, n);
         }
-        static double[,] Desicion(double[,] L,double[,] U,double[] B,int n)
+        static double[,] Desicion(double[,] L, double[,] U, double[] B, int n)
         {
             double[,] LY = ExtendedMatrix(L, B, n);
             LY = gauss(LY, n);
-            double[,] UX = ExtendedMatrix(U, obr(LY,n), n);
+            double[,] UX = ExtendedMatrix(U, obr(LY, n), n);
             UX = gauss(UX, n);
             obr(UX, n);
             return UX;
         }
-        static double[,] ExtendedMatrix(double[,] A, double[] B,int n)
+        static double[,] ExtendedMatrix(double[,] A, double[] B, int n)
         {
             double[,] newA = new double[n, n + 1];
-            for(int i = 0; i < n; i++)
+            for (int i = 0; i < n; i++)
             {
-                for(int j = 0; j < n + 1; j++)
+                for (int j = 0; j < n + 1; j++)
                 {
                     if (j == n) newA[i, j] = B[i];
                     else newA[i, j] = A[i, j];
@@ -388,7 +338,7 @@ namespace NA_laba1
             }
             return newA;
         }
-        static void OutputLU(double[,] A,int n)
+        static void OutputLU(double[,] A, int n)
         {
             for (int i = 0; i < n; i++)
             {
