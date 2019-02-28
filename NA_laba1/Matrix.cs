@@ -21,11 +21,28 @@ namespace NA_laba1
             this.n = n;
         }
         #region Методы
-        static void Output(double[,] A, int n)
+
+        //A(n*m) * B(m*k)
+        static void MulMatrix(double[,] A, double[,] B, int n, int m, int k)
+        {
+            double[,] C = new double[n, k];
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < k; j++)
+                {
+                    for (int c = 0; c < m; c++)
+                    {
+                        C[i, j] += A[i, c] * B[c, j];
+                    }
+                }
+            }
+            Output(C, n, k);
+        }
+        static void Output(double[,] A, int n, int m)
         {
             for (int i = 0; i < n; i++)
             {
-                for (int j = 0; j < n + 1; j++)
+                for (int j = 0; j < m; j++)
                     Console.Write(A[i, j] + " ");
                 Console.WriteLine();
             }
@@ -93,7 +110,7 @@ namespace NA_laba1
                         A[k, j] = buf * A[i, j] - A[k, j];
                 }
             }
-            Output(A, n);
+            Output(A, n,n+1);
             Console.WriteLine("Determinant = " + determinant);
             return A;
         }
@@ -139,7 +156,7 @@ namespace NA_laba1
                         A[k, j] = buf * A[i, j] - A[k, j];
                 }
             }
-            Output(A, n);
+            Output(A, n,n+1);
             return A;
         }
         static double[,] obrModif1(double[,] A, int n)
@@ -190,7 +207,7 @@ namespace NA_laba1
                         A[k, j] = buf * A[i, j] - A[k, j];
                 }
             }
-            Output(A, n);
+            Output(A, n,n+1);
             Console.WriteLine("Determinant = " + determinant);
             return A;
         }
@@ -245,7 +262,7 @@ namespace NA_laba1
                         A[k, j] = buf * A[i, j] - A[k, j];
                 }
             }
-            Output(A, n);
+            Output(A, n,n+1);
             Console.WriteLine("Determinant = " + determinant);
             return A;
         }

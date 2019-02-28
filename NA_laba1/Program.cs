@@ -19,7 +19,7 @@ namespace NA_laba1
             double[,] A1 = new double[n,n]{ { 2, 1, -1, 1 }, { 0.4, 0.5, 4, -8.5 }, { 0.3, -1, 1, 5.2 }, { 1, 0.2, 2.5, -1} };
             double[] B = new double[n] { 2.7, 21.9, -3.9, 9.9 };
             double[,] A = ExtendedMatrix(A1, B, n);
-            double b = average(A, n);
+            double b = average(A, n,n+1);
 
             for (int i = 0; i < n; i++)
                 countX[i] = i;
@@ -34,38 +34,40 @@ namespace NA_laba1
             }
             double[,] newA;
 
-            Console.WriteLine("---------------------------------Метод Гаусса:---------------------------------");
+            Console.WriteLine("-----------------------------------Метод Гаусса:---------------------------------");
             newA = gauss(A, n);
-            Error(newA, n, b);
-            obr(newA, n);
+            Error_B(B, GetBFromExtendedMatrix(MulMatrix(A1, obr(newA, n, n + 1), n, n, 1), n, 1), n);
 
-            //Console.WriteLine("---------------------------------Модификация метода Гаусса1---------------------------------");
-            //  gaussModif1(A, n);
-            //Error(newA, n, b);
-            //obrModif1(newA, n);
+            //Console.WriteLine("-------------------------------Модификация метода Гаусса1---------------------------------");
+            //newA = gaussModif1(A, n);
+            //Error_B(B, GetBFromExtendedMatrix(MulMatrix(A1, obr(newA, n, n + 1), n, n, 1), n, 1), n);
 
-            //Console.WriteLine("---------------------------------Модификация метода Гаусса2:---------------------------------");
+            //Console.WriteLine("-------------------------------Модификация метода Гаусса2:---------------------------------");
             //newA = gaussModif2(A, n);
-            //Error(newA, n, b);
-            //obrModif2(newA, n);
+            //Error_B(B, GetBFromExtendedMatrix(MulMatrix(A1, obr(newA, n, n + 1), n, n, 1), n, 1), n);
 
-            //Console.WriteLine("------------------------------Модификация метода Гаусса3:------------------------------------");
+            //Console.WriteLine("-------------------------------Модификация метода Гаусса3:------------------------------------");
             //newA = gaussModif3(A, n);
-            //Error(newA, n, b);
-            //obrModif3(newA, n);
+            //Error_B(B, GetBFromExtendedMatrix(MulMatrix(A1, obr(newA, n, n + 1), n, n, 1), n, 1), n);
 
 
             //Error(LU(A, B, n), n, b);
 
 
-            //MulMatrix(A,X,n,n,1);
 
+
+            //double[,] E = new double[n, n];
+            //for (int i = 0; i < n; i++)
+            //    E[i, i] = 1;
+            //double b_e = average(E, n, n);
+            //MulMatrix(A1, InverseMatrix(A1, n), n, n, n);
+            //Error(MulMatrix(A1, InverseMatrix(A1, n), n, n, n), n, n, b_e);
 
             Console.ReadLine();
         }
         
         //A(n*m) * B(m*k)
-        static void MulMatrix(double[,] A, double[,] B, int n, int m, int k)
+        static double[,] MulMatrix(double[,] A, double[,] B, int n, int m, int k)
         {
             double[,] C = new double[n, k];
             for(int i = 0; i < n; i++)
@@ -79,9 +81,17 @@ namespace NA_laba1
                 }
             }
             Output(C, n,k);
+            return C;
         }
 
         #region Методы
+        static double[] GetBFromExtendedMatrix(double[,] A,int n, int m)
+        {
+            double[] B = new double[n];
+            for (int i = 0; i < n; i++)
+                B[i] = A[i, m-1];
+            return B;
+        }
         static void Output(double[,] A, int n,int m)
         {
             for (int i = 0; i < n; i++)
@@ -92,21 +102,36 @@ namespace NA_laba1
             }
             Console.WriteLine("------------------------------------------------------------------");
         }
-        static void Error(double[,] A,int n, double b)
+        static void Error(double[,] A,int n,int m, double b)
         {
-            double myB = average(A, n);
+            double myB = average(A, n, m);
             Console.WriteLine(" B = " + b);
             Console.WriteLine("new B = " + myB);
             Console.WriteLine("inccuracy = " + Math.Abs(b - myB) / b);
             // Console.WriteLine("inccuracy = " + Math.Abs(b - myB) / myB);
             Console.WriteLine("------------------------------------------------------------------");
         }
-        static double average(double[,] A, int n)
+        static void Error_B(double[] B,double[] B_1,int n)
+        {
+            double b = average_B(B, n);
+            double new_b = average_B(B_1, n);
+            double incur = Math.Abs(b - new_b) / b;
+            Console.WriteLine("inccuracy = " + incur);
+        }
+        static double average_B(double[] B,int n)
+        {
+            double delta = 0;
+            for (int i = 0; i < n; i++)
+                delta += B[i] * B[i];
+            return delta = Math.Sqrt(delta);
+        }
+        static double average(double[,] A, int n,int m)
         {
             double delta = 0;
             for (int i = 0; i < n; i++)
             {
-                delta += A[i, n] * A[i, n];
+                for (int j = 0; j < n; j++)
+                    delta += A[i, j] * A[i, j];
             }
 
             delta = Math.Sqrt(delta);
@@ -158,9 +183,9 @@ namespace NA_laba1
             Console.WriteLine("Determinant = " + determinant);
             return A;
         }
-        static double[] obr(double[,] A, int n)
+        static double[,] obr(double[,] A, int n,int m)
         {
-            double[] x = new double[n + 1];
+            double[,] x = new double[n + 1,1];
             // int c = n-1;
             for (int i = n - 1; i >= 0; i--)
             {
@@ -168,10 +193,10 @@ namespace NA_laba1
                 for (int k = i; k < n; k++)
                 {
                     //if(i!=0)
-                    buf += A[i, k] * x[k];
+                    buf += A[i, k] * x[k,0];
                 }
-                x[i] = A[i, n] - buf;
-                Console.Write("X"+i+" = "+x[i] + "\n");
+                x[i,0] = A[i, n] - buf;
+                Console.Write("X"+i+" = "+x[i,0] + "\n");
                 //c--;
             }
             return x;
@@ -381,9 +406,12 @@ namespace NA_laba1
         {
             double[,] LY = ExtendedMatrix(L, B, n);
             LY = gauss(LY, n);
-            double[,] UX = ExtendedMatrix(U, obr(LY,n), n);
+            double[,] obratXod = obr(LY, n, n + 1);
+            double[] buf = new double[n];
+            for (int i = 0; i < n; i++) buf[i] = obratXod[i, 0];
+            double[,] UX = ExtendedMatrix(U, buf, n);
             UX = gauss(UX, n);
-            obr(UX, n);
+            obr(UX, n, n+1);
             return UX;
         }
         static double[,] ExtendedMatrix(double[,] A, double[] B,int n)
@@ -408,6 +436,29 @@ namespace NA_laba1
                 Console.WriteLine();
             }
             Console.WriteLine("-----------------------------------------------------------------");
+        }
+        #endregion
+        #region Обратная матрица
+        static double[,] InverseMatrix(double[,] A,int n)
+        {
+            double[,] invrseMatrix = new double[n, n];
+            for(int i = 0; i < n; i++)
+            {
+                double[,] A_buf = A;
+                double[,] x = obr(gauss(ExtendedMatrix(A_buf,GetB_E(n,i),n), n),n, n + 1);
+                for(int j = 0; j < n; j++)
+                {
+                    invrseMatrix[j, i] = x[j,0];
+                }
+            }
+            Output(invrseMatrix, n, n);
+            return invrseMatrix;
+        }
+        static double[] GetB_E(int n,int i)
+        {
+            double[] E = new double[n];
+            E[i] = 1;
+            return E;
         }
         #endregion
     }
