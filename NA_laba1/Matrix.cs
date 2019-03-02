@@ -8,22 +8,31 @@ namespace NA_laba1
 {
     class Matrix
     {
-        int n;
-        double[,] A;
-        double[] B;
-        double[] X;
-        static int[] countX;
-        static double determinant = 1;
-        public Matrix(double[,] A,double[] B,int n)
-        {
-            this.A = A;
-            this.B = B;
-            this.n = n;
-        }
+        public static double determinant;
+        public static int[] countX;
         #region Методы
-
-        //A(n*m) * B(m*k)
-        static void MulMatrix(double[,] A, double[,] B, int n, int m, int k)
+        /// <summary>
+        /// Инициализация вектора индексов неизвестного Х
+        /// </summary>
+        /// <param name="cX"></param>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public static int[] InitialX(int[] cX, int n)
+        {
+            int[] countX = new int[n];
+            for (int i = 0; i < n; i++)
+                countX[i] = i;
+            return countX;
+        }
+        /// <summary>
+        /// умножение матриц
+        /// </summary>
+        /// <param name="A"></param>
+        /// <param name="B"></param>
+        /// <param name="n"></param>
+        /// <param name="m"></param>
+        /// <param name="k"></param>
+        public static double[,] MulMatrix(double[,] A, double[,] B, int n, int m, int k)
         {
             double[,] C = new double[n, k];
             for (int i = 0; i < n; i++)
@@ -37,8 +46,36 @@ namespace NA_laba1
                 }
             }
             Output(C, n, k);
+            return C;
         }
-        static void Output(double[,] A, int n, int m)
+        /// <summary>
+        /// Умножение матрицы на вектор
+        /// </summary>
+        /// <param name="A"></param>
+        /// <param name="B"></param>
+        /// <param name="n"></param>
+        /// <param name="m"></param>
+        /// <param name="k"></param>
+        public static double[] MulMatrix(double[,] A, double[] B, int n, int m)
+        {
+            double[] C = new double[n];
+            for (int i = 0; i < n; i++)
+            {
+                for (int c = 0; c < m; c++)
+                {
+                    C[i] += A[i, c] * B[c];
+                }
+            }
+            Output(C, n);
+            return C;
+        }
+        /// <summary>
+        /// Вывод матрицы
+        /// </summary>
+        /// <param name="A"></param>
+        /// <param name="n"></param>
+        /// <param name="m"></param>
+        public static void Output(double[,] A, int n, int m)
         {
             for (int i = 0; i < n; i++)
             {
@@ -48,7 +85,27 @@ namespace NA_laba1
             }
             Console.WriteLine("------------------------------------------------------------------");
         }
-        static void Error(double[,] A, int n, double b)
+        /// <summary>
+        /// Вывод вектора
+        /// </summary>
+        /// <param name="A"></param>
+        /// <param name="n"></param>
+        /// <param name="m"></param>
+        public static void Output(double[] A, int n)
+        {
+            for (int i = 0; i < n; i++)
+            {
+                Console.WriteLine(A[i]);
+            }
+            Console.WriteLine("------------------------------------------------------------------");
+        }
+        /// <summary>
+        /// Ошибка матриц
+        /// </summary>
+        /// <param name="A"></param>
+        /// <param name="n"></param>
+        /// <param name="b"></param>
+        public static void Error(double[,] A, int n, double b)
         {
             double myB = average(A, n);
             Console.WriteLine(" B = " + b);
@@ -57,18 +114,59 @@ namespace NA_laba1
             // Console.WriteLine("inccuracy = " + Math.Abs(b - myB) / myB);
             Console.WriteLine("------------------------------------------------------------------");
         }
-        static double average(double[,] A, int n)
+        /// <summary>
+        /// Ошибка вектора
+        /// </summary>
+        /// <param name="B"></param>
+        /// <param name="B_1"></param>
+        /// <param name="n"></param>
+        public static void Error(double[] B, double[] B_1, int n)
+        {
+            double b = average(B, n);
+            double new_b = average(B_1, n);
+            double incur = Math.Abs(b - new_b) / b;
+            Console.WriteLine("inccuracy = " + incur);
+        }
+        /// <summary>
+        /// Среднее квадратичное вектора
+        /// </summary>
+        /// <param name="B"></param>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public static double average(double[] B, int n)
+        {
+            double delta = 0;
+            for (int i = 0; i < n; i++)
+                delta += B[i] * B[i];
+            return delta = Math.Sqrt(delta);
+        }
+        /// <summary>
+        /// Среднее квадратичное матрицы
+        /// </summary>
+        /// <param name="A"></param>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public static double average(double[,] A, int n)
         {
             double delta = 0;
             for (int i = 0; i < n; i++)
             {
-                delta += A[i, n] * A[i, n];
+                for (int j = 0; j < n; j++)
+                    delta += A[i, j] * A[i, j];
             }
 
             delta = Math.Sqrt(delta);
             return delta;
         }
-        static double[,] Colum(double[,] A, int n, int a, int k) //а и к - индексы элементов,которые меняем м\у собой
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="A"></param>
+        /// <param name="n"></param>
+        /// <param name="a">Индекс строки, которую нужно заменить на строку с индекс К</param>
+        /// <param name="k">Индекс строки, которую нужно заменить на строку индекс А</param>
+        /// <returns></returns>
+        public static double[,] Colum(double[,] A, int n, int a, int k)
         {
             for (int i = 0; i < n + 1; i++)
             {
@@ -78,7 +176,15 @@ namespace NA_laba1
             }
             return A;
         }
-        static double[,] Row(double[,] A, int n, int a, int k)//а и к - номера столбцов которые меняем
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="A"></param>
+        /// <param name="n"></param>
+        /// <param name="a">Индекс столбца</param>
+        /// <param name="k">Индекс столбца</param>
+        /// <returns></returns>
+        public static double[,] Row(double[,] A, int n, int a, int k)
         {
             for (int i = 0; i < n; i++)
             {
@@ -91,10 +197,44 @@ namespace NA_laba1
             countX[k] = c;
             return A;
         }
+        /// <summary>
+        /// Из квадратной матрицы А получаем прямоугольную путем добавления столбца В
+        /// </summary>
+        /// <param name="A"></param>
+        /// <param name="B"></param>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public static double[,] ExtendedMatrix(double[,] A, double[] B, int n)
+        {
+            double[,] newA = new double[n, n + 1];
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < n + 1; j++)
+                {
+                    if (j == n) newA[i, j] = B[i];
+                    else newA[i, j] = A[i, j];
+                }
+            }
+            return newA;
+        }
+        /// <summary>
+        /// Получение столбца В из расширенной матрицы
+        /// </summary>
+        /// <param name="A"></param>
+        /// <param name="n"></param>
+        /// <param name="m"></param>
+        /// <returns></returns>
+        public static double[] GetBFromExtendedMatrix(double[,] A, int n, int m)
+        {
+            double[] B = new double[n];
+            for (int i = 0; i < n; i++)
+                B[i] = A[i, m - 1];
+            return B;
+        }
         #endregion
 
         #region Гаусс
-        static double[,] gauss(double[,] A, int n)
+        public static double[,] gauss(double[,] A, int n)
         {
             determinant = 1;
             for (int i = 0; i < n; i++)
@@ -114,8 +254,9 @@ namespace NA_laba1
             Console.WriteLine("Determinant = " + determinant);
             return A;
         }
-        static double[] obr(double[,] A, int n)
+        public static double[] obr(double[,] A, int n)
         {
+            InitialX(countX, n);
             double[] x = new double[n + 1];
             // int c = n-1;
             for (int i = n - 1; i >= 0; i--)
@@ -135,8 +276,9 @@ namespace NA_laba1
         #endregion
 
         #region 1 Модификация
-        static double[,] gaussModif1(double[,] A, int n)
+        public static double[,] gaussModif1(double[,] A, int n)
         {
+            countX = InitialX(countX, n);
             for (int i = 0; i < n; i++)
             {
                 double max = A[i, i];
@@ -159,10 +301,10 @@ namespace NA_laba1
             Output(A, n,n+1);
             return A;
         }
-        static double[,] obrModif1(double[,] A, int n)
+        public static double[] obrModif1(double[,] A, int n)
         {
-            double[] x = new double[n + 1];
-            // int c = n-1;
+            double[] x = new double[n];
+            double[] newX = new double[n];
 
             for (int i = n - 1; i >= 0; i--)
             {
@@ -178,15 +320,18 @@ namespace NA_laba1
             }
             for (int i = 0; i < n; i++)
             {
-                Console.Write("X" + i + " = " + x[countX[i]] + "\n");
+                newX[i] = x[countX[i]];
+                Console.Write("X" + i + " = " + newX[i] + "\n");
             }
-            return A;
+           // for(int i=0;i<n;i++) Console.Write("X" + i + " = " + x[i] + "\n");
+            return newX;
         }
         #endregion
 
         #region 2 Модификация
-        static double[,] gaussModif2(double[,] A, int n)
+        public static double[,] gaussModif2(double[,] A, int n)
         {
+            countX = InitialX(countX, n);
             for (int i = 0; i < n; i++)
             {
                 double max = A[i, i];
@@ -211,7 +356,7 @@ namespace NA_laba1
             Console.WriteLine("Determinant = " + determinant);
             return A;
         }
-        static double[,] obrModif2(double[,] A, int n)
+        public static double[] obrModif2(double[,] A, int n)
         {
             double[] x = new double[n + 1];
             // int c = n-1;
@@ -227,13 +372,14 @@ namespace NA_laba1
                 Console.Write("X" + i + " = " + x[i] + "\n");
                 //c--;
             }
-            return A;
+            return x;
         }
         #endregion
 
         #region 3 Модификация
-        static double[,] gaussModif3(double[,] A, int n)
+        public static double[,] gaussModif3(double[,] A, int n)
         {
+            countX = InitialX(countX, n);
             for (int i = 0; i < n; i++)
             {
                 double max = A[i, i];
@@ -266,10 +412,10 @@ namespace NA_laba1
             Console.WriteLine("Determinant = " + determinant);
             return A;
         }
-        static double[,] obrModif3(double[,] A, int n)
+        public static double[] obrModif3(double[,] A, int n)
         {
             double[] x = new double[n + 1];
-            // int c = n-1;
+            double[] newX = new double[n];
 
             for (int i = n - 1; i >= 0; i--)
             {
@@ -285,14 +431,15 @@ namespace NA_laba1
             }
             for (int i = 0; i < n; i++)
             {
-                Console.Write("X" + i + " = " + x[countX[i]] + "\n");
+                newX[countX[i]] = x[i];
+                Console.Write("X" + i + " = " + newX[i] + "\n");
             }
-            return A;
+            return newX;
         }
         #endregion
 
         #region LU-методы
-        static double[,] LU(double[,] A, double[] B, int n)
+        public static double[] LU(double[,] A, double[] B, int n)
         {
             double[,] L = new double[n, n];
             double[,] U = new double[n, n];
@@ -322,9 +469,9 @@ namespace NA_laba1
                 }
             }
             Console.WriteLine("--------------Матрица L");
-            OutputLU(L, n);
+            Output(L, n, n);
             Console.WriteLine("--------------Матрица U");
-            OutputLU(U, n);
+            Output(U, n, n);
             determinant = 1;
             for (int i = 0; i < n; i++)
             {
@@ -333,37 +480,38 @@ namespace NA_laba1
             Console.WriteLine("determ U = " + determinant);
             return Desicion(L, U, B, n);
         }
-        static double[,] Desicion(double[,] L, double[,] U, double[] B, int n)
+        public static double[] Desicion(double[,] L, double[,] U, double[] B, int n)
         {
             double[,] LY = ExtendedMatrix(L, B, n);
             LY = gauss(LY, n);
             double[,] UX = ExtendedMatrix(U, obr(LY, n), n);
             UX = gauss(UX, n);
-            obr(UX, n);
-            return UX;
+            return obr(UX, n);
         }
-        static double[,] ExtendedMatrix(double[,] A, double[] B, int n)
+        #endregion
+
+        #region Обратная матрица
+       public static double[,] InverseMatrix(double[,] A, int n)
         {
-            double[,] newA = new double[n, n + 1];
+            double[,] invrseMatrix = new double[n, n];
             for (int i = 0; i < n; i++)
             {
-                for (int j = 0; j < n + 1; j++)
+                double[,] A_buf = A;
+                double[] x = obr(gauss(ExtendedMatrix(A_buf, GetB_E(n, i), n), n), n);
+                for (int j = 0; j < n; j++)
                 {
-                    if (j == n) newA[i, j] = B[i];
-                    else newA[i, j] = A[i, j];
+                    invrseMatrix[j, i] = x[j];
                 }
             }
-            return newA;
+            Console.WriteLine("----------------Обратная матрица-------------------");
+            Output(invrseMatrix, n, n);
+            return invrseMatrix;
         }
-        static void OutputLU(double[,] A, int n)
+        public static double[] GetB_E(int n, int i)
         {
-            for (int i = 0; i < n; i++)
-            {
-                for (int j = 0; j < n; j++)
-                    Console.Write(A[i, j] + " ");
-                Console.WriteLine();
-            }
-            Console.WriteLine("-----------------------------------------------------------------");
+            double[] E = new double[n];
+            E[i] = 1;
+            return E;
         }
         #endregion
     }
