@@ -59,7 +59,7 @@ namespace NA_laba1
             //Matrix.Error(Matrix.MulMatrix(A1, Matrix.InverseMatrix(A1, n), n, n, n), n, b_e);
             #endregion
             #region Решение СЛАУ с помощью обр матрицы
-            //Matrix.Error(B, Matrix.MulMatrix(A1, Matrix.MulMatrix(Matrix.InverseMatrix(A1, n), B, n, n), n, n), n);
+            Matrix.Error(B, Matrix.MulMatrix(A1, Matrix.MulMatrix(Matrix.InverseMatrix(A1, n), B, n, n), n, n), n);
             #endregion
 
             Console.ReadLine();

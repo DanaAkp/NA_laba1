@@ -478,20 +478,42 @@ namespace NA_laba1
                 determinant *= U[i, i];
             }
             Console.WriteLine("determ U = " + determinant);
-            return Desicion(L, U, B, n);
+            return GetX_LU(U, GetY_LU(L, B));
         }
-        public static double[] Desicion(double[,] L, double[,] U, double[] B, int n)
+        //public static double[] Desicion(double[,] L, double[,] U, double[] B, int n)
+        //{
+        //    double[,] LY = ExtendedMatrix(L, B, n);
+        //    LY = gauss(LY, n);
+        //    double[,] UX = ExtendedMatrix(U, obr(LY, n), n);
+        //    UX = gauss(UX, n);
+        //    return obr(UX, n);
+        //}  
+        public static double[] GetY_LU(double[,] L, double[] B)
         {
-            double[,] LY = ExtendedMatrix(L, B, n);
-            LY = gauss(LY, n);
-            double[,] UX = ExtendedMatrix(U, obr(LY, n), n);
-            UX = gauss(UX, n);
-            return obr(UX, n);
+            double[] Y = new double[B.Length];
+            for (int i = 0; i < Y.Length; i++)
+            {
+                double sum = 0;
+                for (int j = 0; j < i; j++) sum += L[i, j] * Y[j];
+                Y[i] = B[i] - sum;
+            }
+            return Y;
+        }
+        public static double[] GetX_LU(double[,] U, double[] Y)
+        {
+            double[] X = new double[Y.Length];
+            for (int i = X.Length - 1; i >= 0; i--)
+            {
+                double sum = 0;
+                for (int j = i + 1; j < X.Length; j++) sum += U[i, j] * X[j];
+                X[i] = (Y[i] - sum) / U[i, i];
+            }
+            return X;
         }
         #endregion
 
         #region Обратная матрица
-       public static double[,] InverseMatrix(double[,] A, int n)
+        public static double[,] InverseMatrix(double[,] A, int n)
         {
             double[,] invrseMatrix = new double[n, n];
             for (int i = 0; i < n; i++)
