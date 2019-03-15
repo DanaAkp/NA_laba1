@@ -24,9 +24,9 @@ namespace NA_laba1
 
             double[,] newA;
             #region Гаусс
-            //Console.WriteLine("-----------------------------------Метод Гаусса:---------------------------------");
-            //newA = Matrix.gauss(A, n);
-            //Matrix.Error(B, Matrix.MulMatrix(A1, Matrix.obr(newA, n), n, n), n);
+            Console.WriteLine("-----------------------------------Метод Гаусса:---------------------------------");
+            newA = Matrix.gauss(A, n);
+            Matrix.Error(B, Matrix.MulMatrix(A1, Matrix.obr(newA, n), n, n), n);
             #endregion
             #region Модификация 1
             //Console.WriteLine("-------------------------------Модификация метода Гаусса1---------------------------------");
@@ -59,7 +59,7 @@ namespace NA_laba1
             //Matrix.Error(Matrix.MulMatrix(A1, Matrix.InverseMatrix(A1, n), n, n, n), n, b_e);
             #endregion
             #region Решение СЛАУ с помощью обр матрицы
-            Matrix.Error(B, Matrix.MulMatrix(A1, Matrix.MulMatrix(Matrix.InverseMatrix(A1, n), B, n, n), n, n), n);
+            //Matrix.Error(B, Matrix.MulMatrix(A1, Matrix.MulMatrix(Matrix.InverseMatrix(A1, n), B, n, n), n, n), n);
             #endregion
 
             Console.ReadLine();

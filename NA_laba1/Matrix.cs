@@ -122,9 +122,13 @@ namespace NA_laba1
         /// <param name="n"></param>
         public static void Error(double[] B, double[] B_1, int n)
         {
-            double b = average(B, n);
-            double new_b = average(B_1, n);
-            double incur = Math.Abs(b - new_b) / b;
+            double[] sub = new double[B.Length];
+            for(int i = 0; i < B.Length; i++)
+                sub[i] = Math.Abs(B[i] - B_1[i]);
+
+            double b = average(sub, n);
+            double new_b = average(B, n);
+            double incur = b / new_b;
             Console.WriteLine("inccuracy = " + incur);
         }
         /// <summary>
@@ -331,6 +335,7 @@ namespace NA_laba1
         #region 2 Модификация
         public static double[,] gaussModif2(double[,] A, int n)
         {
+            determinant = 1;
             countX = InitialX(countX, n);
             for (int i = 0; i < n; i++)
             {
@@ -379,6 +384,7 @@ namespace NA_laba1
         #region 3 Модификация
         public static double[,] gaussModif3(double[,] A, int n)
         {
+            determinant = 1;
             countX = InitialX(countX, n);
             for (int i = 0; i < n; i++)
             {
@@ -398,7 +404,7 @@ namespace NA_laba1
                 if (row != i) A = Colum(A, n, row, i);
                 if (col != i) A = Row(A, n, col, i);
                 double buf = A[i, i];
-                determinant *= buf;
+                determinant *= A[i, i];
                 for (int j = i; j < n + 1; j++) A[i, j] /= buf;
 
                 for (int k = i + 1; k < n; k++)
@@ -414,7 +420,7 @@ namespace NA_laba1
         }
         public static double[] obrModif3(double[,] A, int n)
         {
-            double[] x = new double[n + 1];
+            double[] x = new double[n];
             double[] newX = new double[n];
 
             for (int i = n - 1; i >= 0; i--)
@@ -422,17 +428,14 @@ namespace NA_laba1
                 double buf = 0;
                 for (int k = i; k < n; k++)
                 {
-                    //if(i!=0)
                     buf += A[i, k] * x[k];
                 }
                 x[i] = A[i, n] - buf;
-                //Console.Write("X" + i + " = " + x[i] + "\n");
-                //c--;
             }
             for (int i = 0; i < n; i++)
             {
                 newX[countX[i]] = x[i];
-                Console.Write("X" + i + " = " + newX[i] + "\n");
+                Console.Write("X" + i + " = " + newX[countX[i]] + "\n");
             }
             return newX;
         }
