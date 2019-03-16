@@ -10,6 +10,7 @@ namespace NA_laba1
     {
         public static double determinant;
         public static int[] countX;
+        public static int CountTransposition = 0;
         #region Методы
         /// <summary>
         /// Инициализация вектора индексов неизвестного Х
@@ -80,7 +81,7 @@ namespace NA_laba1
             for (int i = 0; i < n; i++)
             {
                 for (int j = 0; j < m; j++)
-                    Console.Write(A[i, j] + " ");
+                    Console.Write(string.Format("{0:F2} ",A[i, j]));
                 Console.WriteLine();
             }
             Console.WriteLine("------------------------------------------------------------------");
@@ -95,7 +96,7 @@ namespace NA_laba1
         {
             for (int i = 0; i < n; i++)
             {
-                Console.WriteLine(A[i]);
+                Console.WriteLine(string.Format("{0:F2} ", A[i]));
             }
             Console.WriteLine("------------------------------------------------------------------");
         }
@@ -105,13 +106,14 @@ namespace NA_laba1
         /// <param name="A"></param>
         /// <param name="n"></param>
         /// <param name="b"></param>
-        public static void Error(double[,] A, int n, double b)
+        public static void Error(double[,] A, double[,] A_1, int n)
         {
-            double myB = average(A, n);
-            Console.WriteLine(" B = " + b);
-            Console.WriteLine("new B = " + myB);
-            Console.WriteLine("inccuracy = " + Math.Abs(b - myB) / b);
-            // Console.WriteLine("inccuracy = " + Math.Abs(b - myB) / myB);
+            double[,] sub = new double[n,n];
+            for (int i = 0; i < n; i++) for (int j = 0; j < n; j++) sub[i, j] = Math.Abs(A[i, j] - A_1[i, j]);
+
+            double myB = average(sub, n);
+            double b = average(A, n);
+            Console.WriteLine("inccuracy = " + myB / b);
             Console.WriteLine("------------------------------------------------------------------");
         }
         /// <summary>
@@ -272,7 +274,7 @@ namespace NA_laba1
                     buf += A[i, k] * x[k];
                 }
                 x[i] = A[i, n] - buf;
-                Console.Write("X" + i + " = " + x[i] + "\n");
+                Console.Write(string.Format("X{0} = {1:F2}\n", i , x[i] ));
                 //c--;
             }
             return x;
@@ -282,6 +284,7 @@ namespace NA_laba1
         #region 1 Модификация
         public static double[,] gaussModif1(double[,] A, int n)
         {
+            determinant = 1;
             countX = InitialX(countX, n);
             for (int i = 0; i < n; i++)
             {
@@ -291,8 +294,10 @@ namespace NA_laba1
                     if (Math.Abs(max) < Math.Abs(A[i, c]))
                     { max = A[i, c]; index = c; }
                 if (i != index)
-                    A = Row(A, n, i, index);
-                double buf = A[i, i];
+                {
+                    A = Row(A, n, i, index); CountTransposition += 1;
+                }
+                double buf = A[i, i];determinant *= buf;
                 for (int j = i; j < n + 1; j++) A[i, j] /= buf;
 
                 for (int k = i + 1; k < n; k++)
@@ -302,6 +307,7 @@ namespace NA_laba1
                         A[k, j] = buf * A[i, j] - A[k, j];
                 }
             }
+            Console.WriteLine("Determinant = "+determinant * Math.Pow(-1,CountTransposition));
             Output(A, n,n+1);
             return A;
         }
@@ -315,19 +321,15 @@ namespace NA_laba1
                 double buf = 0;
                 for (int k = i; k < n; k++)
                 {
-                    //if(i!=0)
                     buf += A[i, k] * x[k];
                 }
                 x[i] = A[i, n] - buf;
-                //Console.Write("X" + i + " = " + x[i] + "\n");
-                //c--;
             }
             for (int i = 0; i < n; i++)
             {
                 newX[i] = x[countX[i]];
-                Console.Write("X" + i + " = " + newX[i] + "\n");
+                Console.Write(string.Format("X{0} = {1:F2}\n", i ,newX[i] ));
             }
-           // for(int i=0;i<n;i++) Console.Write("X" + i + " = " + x[i] + "\n");
             return newX;
         }
         #endregion
@@ -345,7 +347,10 @@ namespace NA_laba1
                     if (Math.Abs(max) < Math.Abs(A[c, i]))
                     { max = A[c, i]; index = c; }
                 if (i != index)
+                {
+                    CountTransposition += 1;
                     A = Colum(A, n, i, index);
+                }
                 double buf = A[i, i];
                 determinant *= buf;
                 for (int j = i; j < n + 1; j++) A[i, j] /= buf;
@@ -358,24 +363,21 @@ namespace NA_laba1
                 }
             }
             Output(A, n,n+1);
-            Console.WriteLine("Determinant = " + determinant);
+            Console.WriteLine("Determinant = " + determinant * Math.Pow(-1, CountTransposition));
             return A;
         }
         public static double[] obrModif2(double[,] A, int n)
         {
-            double[] x = new double[n + 1];
-            // int c = n-1;
+            double[] x = new double[n];
             for (int i = n - 1; i >= 0; i--)
             {
                 double buf = 0;
                 for (int k = i; k < n; k++)
                 {
-                    //if(i!=0)
                     buf += A[i, k] * x[k];
                 }
                 x[i] = A[i, n] - buf;
-                Console.Write("X" + i + " = " + x[i] + "\n");
-                //c--;
+                Console.Write(string.Format("X{0} = {1:F2}\n",  i , x[i] ));
             }
             return x;
         }
@@ -401,8 +403,8 @@ namespace NA_laba1
                             col = j;
                         }
                 }
-                if (row != i) A = Colum(A, n, row, i);
-                if (col != i) A = Row(A, n, col, i);
+                if (row != i) { A = Colum(A, n, row, i); CountTransposition += 1; }
+                if (col != i) { A = Row(A, n, col, i); CountTransposition += 1; }
                 double buf = A[i, i];
                 determinant *= A[i, i];
                 for (int j = i; j < n + 1; j++) A[i, j] /= buf;
@@ -415,7 +417,7 @@ namespace NA_laba1
                 }
             }
             Output(A, n,n+1);
-            Console.WriteLine("Determinant = " + determinant);
+            Console.WriteLine("Determinant = " + determinant * Math.Pow(-1,CountTransposition));
             return A;
         }
         public static double[] obrModif3(double[,] A, int n)
@@ -435,7 +437,7 @@ namespace NA_laba1
             for (int i = 0; i < n; i++)
             {
                 newX[countX[i]] = x[i];
-                Console.Write("X" + i + " = " + newX[countX[i]] + "\n");
+                Console.Write(string.Format("X{0} = {1:F2}\n",  i , newX[countX[i]] ));
             }
             return newX;
         }
@@ -483,14 +485,6 @@ namespace NA_laba1
             Console.WriteLine("determ U = " + determinant);
             return GetX_LU(U, GetY_LU(L, B));
         }
-        //public static double[] Desicion(double[,] L, double[,] U, double[] B, int n)
-        //{
-        //    double[,] LY = ExtendedMatrix(L, B, n);
-        //    LY = gauss(LY, n);
-        //    double[,] UX = ExtendedMatrix(U, obr(LY, n), n);
-        //    UX = gauss(UX, n);
-        //    return obr(UX, n);
-        //}  
         public static double[] GetY_LU(double[,] L, double[] B)
         {
             double[] Y = new double[B.Length];
@@ -522,7 +516,7 @@ namespace NA_laba1
             for (int i = 0; i < n; i++)
             {
                 double[,] A_buf = A;
-                double[] x = obr(gauss(ExtendedMatrix(A_buf, GetB_E(n, i), n), n), n);
+                double[] x = obrModif1(gaussModif1(ExtendedMatrix(A_buf, GetB_E(n, i), n), n), n);
                 for (int j = 0; j < n; j++)
                 {
                     invrseMatrix[j, i] = x[j];
